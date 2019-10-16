@@ -1,0 +1,3 @@
+[submodule "depends/gnuradio"]
+	path = depends/gnuradio
+	url = https://github.com/gnuradio/gnuradio.git
