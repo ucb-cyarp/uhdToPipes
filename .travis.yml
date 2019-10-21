@@ -9,11 +9,11 @@ matrix:
   include:
     - compiler: gcc
       os: linux
-      dist: trusty
+      dist: bionic
       env: COMPILER=g++-5
     - compiler: clang
       os: linux
-      dist: trusty
+      dist: bionic
       env: COMPILER=clang++-3.8
   exclude:
     - compiler: gcc
