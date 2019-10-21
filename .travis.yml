@@ -4,7 +4,10 @@ before_install:
   - sudo pip install PyBOMBS
   - pybombs auto-config
   - pybombs recipes add-defaults
-  - pybombs install uhd
+  - mkdir ~/toolchain-uhd
+  - pybombs prefix init ~/toolchain-uhd -a uhdprefix
+  - pybombs -p uhdprefix install uhd
+  - source ~/toolchain-uhd/setup_env.sh
 
 os:
   - linux
