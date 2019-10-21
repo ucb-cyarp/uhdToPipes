@@ -24,12 +24,9 @@ void* txHandler(void* argsUncast) {
         return NULL;
     }
 
-    float *buff = NULL;
-    void **buffs_ptr = NULL;
-
     fprintf(stderr, "Buffer size in samples: %zu\n", samps_per_buff);
-    buff = calloc(sizeof(float), samps_per_buff * 2);
-    buffs_ptr = (void **) &buff;
+    float *buff = calloc(sizeof(float), samps_per_buff * 2);
+    const void **buffs_ptr = (const void **) &buff;
 
     //Note: the samples are complex floats which have a real component followed by an imagionary component
 
