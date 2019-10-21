@@ -26,9 +26,7 @@ addons:
       - clang-6.0
       - gcc-5
       - g++-5
-      - libuhd-dev
-      - libuhd003.010.003
-      - uhd-host
+      - gnuradio
 
 script:
   - echo $CXX; echo $CC
