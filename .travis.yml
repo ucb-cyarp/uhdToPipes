@@ -27,7 +27,7 @@ addons:
       - gcc-5
       - g++-5
       - libuhd-dev
-      - libuhd003
+      - libuhd003.010.003
       - uhd-host
 
 script:
