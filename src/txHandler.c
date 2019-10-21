@@ -37,7 +37,7 @@ void* txHandler(void* argsUncast) {
     FILE *txPipe = fopen(txPipeName, "rb");
 
     FILE *txFeedbackPipe = NULL;
-    if(*txFeedbackPipeName != NULL){
+    if(txFeedbackPipeName != NULL){
         txFeedbackPipe = fopen(txFeedbackPipeName, "wb");
     }
 
@@ -53,7 +53,7 @@ void* txHandler(void* argsUncast) {
     while(running) {
         if (terminateCheckCounter > TERMINATE_CHECK_ITTERATIONS) {
             terminateCheckCounter = 0;
-            if (*terminateStatus = true) {
+            if (*terminateStatus == true) {
                 running = false; //not actually needed
                 break;
             }
