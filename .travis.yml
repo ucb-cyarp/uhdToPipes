@@ -1,5 +1,9 @@
 language: cpp
 
+before_install:
+  - sudo pip install PyBOMBS
+  - pybombs install uhd
+
 os:
   - linux
 
@@ -26,7 +30,8 @@ addons:
       - clang-6.0
       - gcc-5
       - g++-5
-      - gnuradio
+      - python-pip
+      - python3-pip
 
 script:
   - echo $CXX; echo $CC
