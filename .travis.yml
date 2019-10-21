@@ -26,7 +26,8 @@ addons:
       - clang-6.0
       - gcc-5
       - g++-5
-      - uhd
+      - libuhd-dev
+      - uhd-host
 
 script:
   - echo $CXX; echo $CC
