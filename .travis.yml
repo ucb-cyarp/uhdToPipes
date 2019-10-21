@@ -14,7 +14,7 @@ matrix:
     - compiler: clang
       os: linux
       dist: bionic
-      env: COMPILER=clang++-3.8
+      env: COMPILER=clang++-6.0
   exclude:
     - compiler: gcc
     - compiler: clang
@@ -23,7 +23,7 @@ addons:
   apt:
     packages:
       - cmake
-      - clang-3.8
+      - clang-6.0
       - gcc-5
       - g++-5
       - uhd
