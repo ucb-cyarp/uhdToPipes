@@ -607,7 +607,7 @@ int main(int argc, char* argv[])
         rxArgs.verbose=verbose;
         rxArgs.wasRunning=&rxWasRunning;
 
-        int threadStartStatus = pthread_create(rxPThread, &rxThreadAttributes, rxHandler, &rxArgs);
+        int threadStartStatus = pthread_create(&rxPThread, &rxThreadAttributes, rxHandler, &rxArgs);
         if(threadStartStatus != 0)
         {
             printf("Error creating Rx thread");

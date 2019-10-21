@@ -10,6 +10,9 @@ include_directories(src)
 find_package(UHD)
 include_directories(${UHD_INCLUDE_DIRS})
 
+#From https://stackoverflow.com/questions/1620918/cmake-and-libpthread
+find_package (Threads)
+
 set(SRC_LIST
         src/main.c
         src/rxHandler.c
@@ -19,4 +22,4 @@ set(SRC_LIST
         src/common.h)
 
 add_executable(uhdToPipes ${SRC_LIST})
-target_link_libraries(uhdToPipes ${UHD_LIBRARIES})
+target_link_libraries(uhdToPipes ${UHD_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
