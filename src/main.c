@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sched.h>
+#include <signal.h>
 #include "txHandler.h"
 #include "rxHandler.h"
 
