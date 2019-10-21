@@ -2,6 +2,8 @@ language: cpp
 
 before_install:
   - sudo pip install PyBOMBS
+  - pybombs auto-config
+  - pybombs recipes add-defaults
   - pybombs install uhd
 
 os:
