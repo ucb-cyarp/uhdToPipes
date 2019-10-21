@@ -18,7 +18,7 @@ void* txHandler(void* argsUncast) {
     bool verbose = args->verbose;
 
     size_t samps_per_buff;
-    UHD_API uhd_error status = uhd_tx_streamer_max_num_samps(tx_streamer, &samps_per_buff);
+    uhd_error status = uhd_tx_streamer_max_num_samps(tx_streamer, &samps_per_buff);
     if(status){
         printf("Could not retrieve max number of Tx samples ... exiting\n");
         return NULL;
@@ -101,7 +101,7 @@ void* txHandler(void* argsUncast) {
             srcSampleInd += samplesToTransferFromSrcArray;
 
             size_t num_samps_sent = 0;
-            UHD_API uhd_error status = uhd_tx_streamer_send(tx_streamer, buffs_ptr, samps_per_buff, &tx_md, 10, &num_samps_sent);
+            uhd_error status = uhd_tx_streamer_send(tx_streamer, buffs_ptr, samps_per_buff, &tx_md, 10, &num_samps_sent);
             if(status){
                 running = false; //not actually needed
                 *terminateStatus = true;
@@ -138,7 +138,7 @@ void* txHandler(void* argsUncast) {
             }
             //Do not need to incremnet srcSampleInd since this is the last transmission for this block and it will be reset on the next iteration
             size_t num_samps_sent = 0;
-            UHD_API uhd_error status = uhd_tx_streamer_send(tx_streamer, buffs_ptr, sampsReamining, &tx_md, 10, &num_samps_sent);
+            uhd_error status = uhd_tx_streamer_send(tx_streamer, buffs_ptr, sampsReamining, &tx_md, 10, &num_samps_sent);
             if(status){
                 running = false; //not actually needed
                 *terminateStatus = true;
