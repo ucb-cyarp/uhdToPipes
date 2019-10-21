@@ -309,7 +309,7 @@ int main(int argc, char* argv[])
 
     // Create USRP
     fprintf(stderr, "Creating USRP with args \"%s\"...\n", device_args);
-    UHD_API uhdStatus = uhd_usrp_make(&usrp, device_args);
+    UHD_API uhd_error uhdStatus = uhd_usrp_make(&usrp, device_args);
     if(uhdStatus){
         printf("Error Creating USRP\n");
         return_code = EXIT_FAILURE;

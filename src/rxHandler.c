@@ -24,7 +24,7 @@ void* rxHandler(void* argsUncast) {
     float *buff = NULL;
     void **buffs_ptr = NULL;
 
-    UHD_API status = uhd_rx_streamer_max_num_samps(rx_streamer, &samps_per_buff);
+    UHD_API uhd_error status = uhd_rx_streamer_max_num_samps(rx_streamer, &samps_per_buff);
     if(status){
         printf("Could not retrieve max number of samples ... exiting\n");
         return NULL;
