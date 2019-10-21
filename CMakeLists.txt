@@ -10,5 +10,13 @@ include_directories(src)
 find_package(UHD)
 include_directories(${UHD_INCLUDE_DIRS})
 
-add_executable(uhdToPipes src/main.c)
+set(SRC_LIST
+        src/main.c
+        src/rxHandler.c
+        src/rxHandler.h
+        src/txHandler.c
+        src/txHandler.h
+        src/common.h)
+
+add_executable(uhdToPipes ${SRC_LIST})
 target_link_libraries(uhdToPipes ${UHD_LIBRARIES})
