@@ -3,7 +3,8 @@ project(uhdToPipes C)
 
 set(CMAKE_C_STANDARD 11)
 
-set(CMAKE_MODULE_PATH depends/gnuradio/cmake)
+#From https://github.com/microsoft/vscode-cmake-tools/issues/208
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/depends/gnuradio/cmake/Modules)
 
 include_directories(src)
 
