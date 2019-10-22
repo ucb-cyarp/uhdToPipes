@@ -19,7 +19,7 @@
 bool terminateStatus = false;
 
 void print_help(void){
-    fprintf(stderr, "rx_samples_c - A simple RX example using UHD's C API\n\n"
+    fprintf(stderr, "uhdToPipes - A tool for communicating with a USRP via POSIX Pipes\n\n"
 
                     "Options: (with conflicting arguments, last argument issued has precidence)\n"
                     "    -a (device args)\n"
