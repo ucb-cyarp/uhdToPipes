@@ -56,7 +56,7 @@ void* rxHandler(void* argsUncast) {
             //Check if thread should exit
             if (terminateCheckCounter > TERMINATE_CHECK_ITTERATIONS) {
                 terminateCheckCounter = 0;
-                if (*terminateStatus = true) {
+                if (*terminateStatus == true) {
                     running = false; //not actually needed
                     break;
                 }
