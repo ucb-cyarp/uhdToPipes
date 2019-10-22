@@ -33,10 +33,10 @@ void print_help(void){
                     "    --rxcpu (CPU for Rx streaming - defaults to don't care)\n"
                     "    --rxpipe (path to the Rx pipe)\n"
                     "    --txpipe (path to the Tx pipe)\n"
-                    "    --txfeedbackpipe (path to the Tx feedback pipe - only applies when txpipe is supplied\n)"
-                    "    --samppertransactrx (samples per rx transaction\n)"
-                    "    --samppertransacttx (samples per tx transaction\n)"
-                    "    --forcefulltxbuffer (forces a full tx buffer for each transmission to the tx)"
+                    "    --txfeedbackpipe (path to the Tx feedback pipe - only applies when txpipe is supplied)\n"
+                    "    --samppertransactrx (samples per rx transaction)\n"
+                    "    --samppertransacttx (samples per tx transaction)\n"
+                    "    --forcefulltxbuffer (forces a full tx buffer for each transmission to the tx)\n"
                     "    -v (enable verbose prints)\n"
                     "    -h (print this help message)\n"
                     "    --help (print this help message)\n");
@@ -298,6 +298,7 @@ int main(int argc, char* argv[])
     if(rxPipeName == NULL & txPipeName == NULL){
         //Nothing to do, exit
         printf("No Rx or Tx pipe specified ... exiting\n");
+        print_help();
         return_code = EXIT_FAILURE;
         cleanup(device_args, usrp, rx_streamer, rx_md, tx_streamer, tx_md, verbose, return_code);
     }
