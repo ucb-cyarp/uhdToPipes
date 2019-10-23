@@ -11,8 +11,6 @@ void* rxHandler(void* argsUncast) {
     char* rxPipeName = args->rxPipeName;
     uhd_rx_streamer_handle rx_streamer = args->rx_streamer;
     uhd_rx_metadata_handle rx_md = args->rx_md;
-    uhd_stream_cmd_t rx_stream_start_cmd = args->rx_stream_start_cmd;
-    uhd_stream_cmd_t rx_stream_stop_cmd = args->rx_stream_stop_cmd;
     int samplesPerTransactRx = args->samplesPerTransactRx;
     bool sendStopCmd = args->sendStopCmd;
     bool verbose = args->verbose;
@@ -41,13 +39,24 @@ void* rxHandler(void* argsUncast) {
     float* samplesIm = samplesRe+samplesPerTransactRx;
     int numRemainingSamples = 0;
 
+    uhd_stream_cmd_t rx_stream_start_cmd;
+    rx_stream_start_cmd.stream_mode = UHD_STREAM_MODE_START_CONTINUOUS;
+    rx_stream_start_cmd.num_samps = samps_per_buff; //Request the max number of samples per transaction
+    rx_stream_start_cmd.stream_now = true;
+
+    uhd_stream_cmd_t rx_stream_stop_cmd;
+    rx_stream_stop_cmd.stream_mode = UHD_STREAM_MODE_STOP_CONTINUOUS;
+    rx_stream_stop_cmd.num_samps = samps_per_buff;
+    rx_stream_stop_cmd.stream_now = true;
+
     // Issue stream command
-    fprintf(stderr, "Issuing stream command.\n");
+    fprintf(stderr, "Issuing Rx stream command.\n");
     status = uhd_rx_streamer_issue_stream_cmd(rx_streamer, &rx_stream_start_cmd);
     *wasRunning = true;
     if(!status) {
         // Set up file output
         FILE *rxPipe = fopen(rxPipeName, "wb");
+        printf("Opened Rx Pipe: %s\n", rxPipeName);
 
         // Actual streaming
         bool running = true;
@@ -112,6 +121,9 @@ void* rxHandler(void* argsUncast) {
 
                 //samples is samplesRe::samplesIm
                 fwrite(samples, sizeof(float), samplesPerTransactRx*2, rxPipe);  //Note:
+                if (verbose) {
+                    fprintf(stderr, "Wrote %d blocks (%d samples) to Rx pipe)\n", 1, samplesPerTransactRx);
+                }
             }
             //Copy remaining samples
             for(int i = 0; i < numRemaining; i++){

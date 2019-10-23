@@ -32,11 +32,13 @@ void* txHandler(void* argsUncast) {
 
     // Set up pipes
     FILE *txPipe = fopen(txPipeName, "rb");
+    printf("Opened Tx Pipe: %s\n", txPipeName);
 
     FILE *txFeedbackPipe = NULL;
     if(txFeedbackPipeName != NULL){
         txFeedbackPipe = fopen(txFeedbackPipeName, "wb");
     }
+    printf("Opened Tx Feedback Pipe: %s\n", txFeedbackPipeName);
 
     float* pipeSamples = malloc(samplesPerTransactTx*2*sizeof(float));
     float* pipeSamplesRe = pipeSamples;
@@ -74,6 +76,16 @@ void* txHandler(void* argsUncast) {
             *terminateStatus = true; //Inform other threads to stop (Tx pipe error)
             running = false; //Not actually needed
             break;
+        }
+
+        //Report Feedback if Pipe Exists
+        //Note: Feedback is in terms of samplesPerTransactTx not samps_per_buff
+        if(txFeedbackPipe != NULL) {
+            FEEDBACK_DATATYPE fbVal = 1; //Right now, we are reading 1 block at a time.
+            fwrite(&fbVal, sizeof(FEEDBACK_DATATYPE), 1, txFeedbackPipe);
+            if(verbose){
+                fprintf(stderr, "Wrote Feedback: %d\n", fbVal);
+            }
         }
 
         //Find number of tx transactions per block
@@ -149,13 +161,12 @@ void* txHandler(void* argsUncast) {
                 break;
             }
 
-            numTransmissions++; //Increment numTransmissions for reporting on the feedback pipe
-        }
+            if(verbose){
+                fprintf(stderr, "Sent %zu samples\n", num_samps_sent);
+            }
 
-        //Report Feedback if Pipe Exists
-        if(txFeedbackPipe != NULL) {
-            FEEDBACK_DATATYPE fbVal = numTransmissions;
-            fwrite(&fbVal, sizeof(FEEDBACK_DATATYPE), 1, txFeedbackPipe);
+            //Not needed since this is not used elsewhere
+            numTransmissions++; //Increment numTransmissions for reporting on the feedback pipe
         }
     }
 

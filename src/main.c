@@ -318,8 +318,6 @@ int main(int argc, char* argv[])
     }
 
     // ++++ Setup ADC Side ++++
-    uhd_stream_cmd_t rx_stream_start_cmd;
-    uhd_stream_cmd_t rx_stream_stop_cmd;
     if(rxPipeName != NULL) {
         uhdStatus = uhd_rx_streamer_make(&rx_streamer);
         if(uhdStatus){
@@ -351,12 +349,6 @@ int main(int argc, char* argv[])
                 .channel_list = &rxChannel,
                 .n_channels = 1
         };
-
-        rx_stream_start_cmd.stream_mode = UHD_STREAM_MODE_START_CONTINUOUS;
-        rx_stream_start_cmd.stream_now = true;
-
-        rx_stream_stop_cmd.stream_mode = UHD_STREAM_MODE_STOP_CONTINUOUS;
-        rx_stream_stop_cmd.stream_now = true;
 
         // Set rate
         fprintf(stderr, "Setting RX Rate: %f...\n", rate);
@@ -601,8 +593,6 @@ int main(int argc, char* argv[])
         rxArgs.rxPipeName=rxPipeName;
         rxArgs.rx_streamer=rx_streamer;
         rxArgs.rx_md=rx_md;
-        rxArgs.rx_stream_start_cmd=rx_stream_start_cmd;
-        rxArgs.rx_stream_stop_cmd=rx_stream_stop_cmd;
         rxArgs.sendStopCmd=true;
         rxArgs.samplesPerTransactRx=samplesPerTransactionRx;
         rxArgs.verbose=verbose;

@@ -15,8 +15,6 @@ typedef struct{
     char* rxPipeName;
     uhd_rx_streamer_handle rx_streamer; //This is a pointer
     uhd_rx_metadata_handle rx_md; //This is a pointer
-    uhd_stream_cmd_t rx_stream_start_cmd; //This is NOT a pointer
-    uhd_stream_cmd_t rx_stream_stop_cmd; //This is NOT a pointer
     bool sendStopCmd;
     int samplesPerTransactRx;
     bool verbose;
