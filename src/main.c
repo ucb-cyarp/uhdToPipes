@@ -37,6 +37,8 @@ void print_help(void){
                     "    --samppertransactrx (samples per rx transaction)\n"
                     "    --samppertransacttx (samples per tx transaction)\n"
                     "    --forcefulltxbuffer (forces a full tx buffer for each transmission to the tx)\n"
+                    "    --txchan (tx channel: 0 or 1 for USRP x310)\n"
+                    "    --rxchan (tx channel: 0 or 1 for USRP x310)\n"
                     "    -v (enable verbose prints)\n"
                     "    -h (print this help message)\n"
                     "    --help (print this help message)\n");
@@ -275,6 +277,25 @@ int main(int argc, char* argv[])
             }
         }else if(strcmp(argv[i], "--forcefulltxbuffer") == 0 || strcmp(argv[i], "-forcefulltxbuffer") == 0 ) {
             forceFullTxBuffer = true;
+            
+        }else if(strcmp(argv[i], "--txchan") == 0 || strcmp(argv[i], "-txchan") == 0 ) {
+            i++;
+            if(i<argc) {
+                txChannel = atoi(argv[i]);
+            }else{
+                print_help();
+                return_code = EXIT_FAILURE;
+                cleanup(device_args, usrp, rx_streamer, rx_md, tx_streamer, tx_md, verbose, return_code);
+            }
+        }else if(strcmp(argv[i], "--rxchan") == 0 || strcmp(argv[i], "-rxchan") == 0 ) {
+            i++;
+            if(i<argc) {
+                rxChannel = atoi(argv[i]);
+            }else{
+                print_help();
+                return_code = EXIT_FAILURE;
+                cleanup(device_args, usrp, rx_streamer, rx_md, tx_streamer, tx_md, verbose, return_code);
+            }
         }else if(strcmp(argv[i], "-v") == 0) {
             //No need to get the value of this argument
             verbose = true;
