@@ -125,8 +125,8 @@ int main(int argc, char* argv[])
     char* txFeedbackPipeName = NULL;
     bool verbose = false;
     int return_code = EXIT_SUCCESS;
-    int samplesPerTransactionRx;
-    int samplesPerTransactionTx;
+    int samplesPerTransactionRx=1;
+    int samplesPerTransactionTx=1;
     bool forceFullTxBuffer = false;
 
     uhd_usrp_handle usrp = NULL;

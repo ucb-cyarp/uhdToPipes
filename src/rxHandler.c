@@ -58,6 +58,8 @@ void* rxHandler(void* argsUncast) {
         FILE *rxPipe = fopen(rxPipeName, "wb");
         printf("Opened Rx Pipe: %s\n", rxPipeName);
 
+        printf("Samples Per Rx on Pipe: %d\n", samplesPerTransactRx);
+
         // Actual streaming
         bool running = true;
         int terminateCheckCounter = 0;
@@ -101,7 +103,7 @@ void* rxHandler(void* argsUncast) {
             //  The underlying C++ type is std::complex<float>
 
             int numBlocks = (num_rx_samps+numRemainingSamples)/samplesPerTransactRx;
-            int numRemaining = (num_rx_samps + numRemainingSamples) % samplesPerTransactRx;
+            int numRemaining = (num_rx_samps+numRemainingSamples)%samplesPerTransactRx;
             int srcSampleInd = 0;
 
             for(int block = 0; block<numBlocks; block++){
@@ -121,22 +123,26 @@ void* rxHandler(void* argsUncast) {
 
                 //samples is samplesRe::samplesIm
                 fwrite(samples, sizeof(float), samplesPerTransactRx*2, rxPipe);  //Note:
-                if (verbose) {
-                    fprintf(stderr, "Wrote %d blocks (%d samples) to Rx pipe)\n", 1, samplesPerTransactRx);
-                }
+                
             }
+            fflush(rxPipe);
+            if (verbose) {
+                fprintf(stderr, "Wrote %d blocks (%d samples) to Rx pipe)\n", numBlocks, numBlocks*samplesPerTransactRx);
+            }
+
             //Copy remaining samples
+            int numToTransfer = numRemaining-numRemainingSamples;
             for(int i = 0; i < numRemaining; i++){
                 remainingSamplesRe[numRemainingSamples+i] = buff[srcSampleInd+2*i];
                 remainingSamplesIm[numRemainingSamples+i] = buff[srcSampleInd+2*i+1];
             }
-            numRemainingSamples += numRemaining; //This is += to handle the case when the number of received samples is less than the block size
+            numRemainingSamples += numToTransfer; //This is += to handle the case when the number of received samples is less than the block size
 
             if (verbose) {
                 int64_t full_secs;
                 double frac_secs;
                 uhd_rx_metadata_time_spec(rx_md, &full_secs, &frac_secs);
-                fprintf(stderr, "Received packet: %zu samples, %.f full secs, %f frac secs\n",
+                fprintf(stderr, "Received USRP packet: %zu samples, %.f full secs, %f frac secs\n",
                         num_rx_samps,
                         difftime(full_secs, (int64_t) 0),
                         frac_secs);

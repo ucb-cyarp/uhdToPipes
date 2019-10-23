@@ -40,9 +40,11 @@ void* txHandler(void* argsUncast) {
     }
     printf("Opened Tx Feedback Pipe: %s\n", txFeedbackPipeName);
 
+    printf("Samples Per Tx on Pipe: %d\n", samplesPerTransactTx);
+
     float* pipeSamples = malloc(samplesPerTransactTx*2*sizeof(float));
     float* pipeSamplesRe = pipeSamples;
-    float* pipeSamplesIm = pipeSamples+samps_per_buff;
+    float* pipeSamplesIm = pipeSamples+samplesPerTransactTx;
     float* samplesRemainder = malloc(samps_per_buff*2*sizeof(float));
     int numRemainingSamples = 0;
 
@@ -59,7 +61,6 @@ void* txHandler(void* argsUncast) {
         } else {
             terminateCheckCounter++;
         }
-
         int elementsRead = fread(pipeSamples, sizeof(float)*2, samplesPerTransactTx, txPipe);
         if(feof(txPipe)){
             running = false; //Not actually needed
@@ -83,8 +84,9 @@ void* txHandler(void* argsUncast) {
         if(txFeedbackPipe != NULL) {
             FEEDBACK_DATATYPE fbVal = 1; //Right now, we are reading 1 block at a time.
             fwrite(&fbVal, sizeof(FEEDBACK_DATATYPE), 1, txFeedbackPipe);
+            fflush(txFeedbackPipe);
             if(verbose){
-                fprintf(stderr, "Wrote Feedback: %d\n", fbVal);
+                fprintf(stderr, "Wrote %d Feedback Pipe\n", fbVal);
             }
         }
 
@@ -125,7 +127,7 @@ void* txHandler(void* argsUncast) {
             }
 
             if(verbose){
-                fprintf(stderr, "Sent %zu samples\n", num_samps_sent);
+                fprintf(stderr, "Sent %zu samples to USRP\n", num_samps_sent);
             }
         }
 
@@ -133,14 +135,15 @@ void* txHandler(void* argsUncast) {
         //Either partially fill another buffer or place it in the remainder
         if(forceFullTxBuffer){
             //Copy remaining samples to remainder buffer
+            int numToTransferToRemainder = sampsReamining-numRemainingSamples;
             for(int i = 0; i<sampsReamining; i++){
                 samplesRemainder[numRemainingSamples*2+i*2] = pipeSamplesRe[srcSampleInd+i];
                 samplesRemainder[numRemainingSamples*2+i*2+1] = pipeSamplesRe[srcSampleInd+i];
             }
-            numRemainingSamples += sampsReamining; //This is += to handle the case when the number of received samples is less than the block size
+            numRemainingSamples += numToTransferToRemainder; //This is += to handle the case when the number of received samples is less than the block size
         }else{
             //Partially fill a buffer and send it
-            //Remainder cannot exist
+            //Remainder cannot exist in this case because no remainder will ever be stored
             for(int i = 0; i<sampsReamining; i++){
                 buff[2*i] = pipeSamplesRe[srcSampleInd+i];
                 buff[2*i+1] = pipeSamplesIm[srcSampleInd+i];
