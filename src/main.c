@@ -39,6 +39,7 @@ void print_help(void){
                     "    --forcefulltxbuffer (forces a full tx buffer for each transmission to the tx)\n"
                     "    --txchan (tx channel: 0 or 1 for USRP x310)\n"
                     "    --rxchan (tx channel: 0 or 1 for USRP x310)\n"
+                    "    --txratelimit (limit tx rate to 1.01x that expected by the tx)"
                     "    -v (enable verbose prints)\n"
                     "    -h (print this help message)\n"
                     "    --help (print this help message)\n");
@@ -130,6 +131,7 @@ int main(int argc, char* argv[])
     int samplesPerTransactionRx=1;
     int samplesPerTransactionTx=1;
     bool forceFullTxBuffer = false;
+    bool txRateLimit = false;
 
     uhd_usrp_handle usrp = NULL;
     uhd_rx_streamer_handle rx_streamer = NULL;
@@ -296,6 +298,9 @@ int main(int argc, char* argv[])
                 return_code = EXIT_FAILURE;
                 cleanup(device_args, usrp, rx_streamer, rx_md, tx_streamer, tx_md, verbose, return_code);
             }
+        }else if(strcmp(argv[i], "--txratelimit") == 0 || strcmp(argv[i], "-txratelimit") == 0) {
+            //No need to get the value of this argument
+            txRateLimit = true;
         }else if(strcmp(argv[i], "-v") == 0) {
             //No need to get the value of this argument
             verbose = true;
@@ -571,6 +576,8 @@ int main(int argc, char* argv[])
         txArgs.samplesPerTransactTx = samplesPerTransactionTx;
         txArgs.forceFullTxBuffer = forceFullTxBuffer;
         txArgs.verbose = verbose;
+        txArgs.txRateLimit = txRateLimit;
+        txArgs.txRate = rate;
 
         int threadStartStatus = pthread_create(&txPThread, &txThreadAttributes, txHandler, &txArgs);
         if(threadStartStatus != 0)

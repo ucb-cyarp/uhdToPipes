@@ -123,7 +123,6 @@ void* rxHandler(void* argsUncast) {
 
                 //samples is samplesRe::samplesIm
                 fwrite(samples, sizeof(float), samplesPerTransactRx*2, rxPipe);  //Note:
-                
             }
             fflush(rxPipe);
             if (verbose) {

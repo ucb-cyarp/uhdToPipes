@@ -18,6 +18,8 @@ typedef struct{
     uhd_tx_metadata_handle tx_md; //This is a pointer
     int samplesPerTransactTx;
     bool forceFullTxBuffer;
+    bool txRateLimit;
+    int txRate;
 
     bool verbose;
 } txHandlerArgs_t;
