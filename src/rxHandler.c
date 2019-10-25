@@ -117,7 +117,7 @@ void* rxHandler(void* argsUncast) {
                 int samplesToTransferFromSrcArray = samplesPerTransactRx-destIndOffset;
                 for(int i = 0; i<samplesToTransferFromSrcArray; i++){
                     samplesRe[destIndOffset+i] = buff[srcSampleInd+2*i];
-                    samplesRe[destIndOffset+i] = buff[srcSampleInd+2*i+1];
+                    samplesIm[destIndOffset+i] = buff[srcSampleInd+2*i+1];
                 }
                 srcSampleInd += samplesToTransferFromSrcArray*2; //*2 because each sample has 2 components
 

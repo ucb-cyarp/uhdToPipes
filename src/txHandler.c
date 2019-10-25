@@ -106,8 +106,8 @@ void* txHandler(void* argsUncast) {
             //Copy samples from pipe block
             int samplesToTransferFromSrcArray = samps_per_buff-dstIndOffset;
             for(int i = 0; i<samplesToTransferFromSrcArray; i++){
-                buff[dstIndOffset+2*i] = pipeSamplesRe[srcSampleInd+i];
-                buff[dstIndOffset+2*i+1] = pipeSamplesIm[srcSampleInd+i];
+                buff[dstIndOffset*2+2*i] = pipeSamplesRe[srcSampleInd+i];
+                buff[dstIndOffset*2+2*i+1] = pipeSamplesIm[srcSampleInd+i];
             }
             srcSampleInd += samplesToTransferFromSrcArray;
 
@@ -138,7 +138,7 @@ void* txHandler(void* argsUncast) {
             int numToTransferToRemainder = sampsReamining-numRemainingSamples;
             for(int i = 0; i<sampsReamining; i++){
                 samplesRemainder[numRemainingSamples*2+i*2] = pipeSamplesRe[srcSampleInd+i];
-                samplesRemainder[numRemainingSamples*2+i*2+1] = pipeSamplesRe[srcSampleInd+i];
+                samplesRemainder[numRemainingSamples*2+i*2+1] = pipeSamplesIm[srcSampleInd+i];
             }
             numRemainingSamples += numToTransferToRemainder; //This is += to handle the case when the number of received samples is less than the block size
         }else{
