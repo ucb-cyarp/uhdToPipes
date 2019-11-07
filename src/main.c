@@ -206,7 +206,7 @@ void* mainThread(void* args_uncast){
         uhd_stream_args_t stream_args = {
                 .cpu_format = "fc32", //Want the received data to be converted to single precision complex floating point
                 .otw_format = "sc16", //The actual "On the wire" format is a 16 bit complex integer -> this matches what the ADC supplies
-                .args = "",
+                .args = "", //Can supply SPP arguments like spp=128
                 .channel_list = &rxChannel,
                 .n_channels = 1
         };
