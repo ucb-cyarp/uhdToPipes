@@ -28,7 +28,7 @@ void* rxHandler(void* argsUncast) {
         return NULL;
     }
 
-    fprintf(stderr, "Buffer size in samples: %zu\n", samps_per_buff);
+    fprintf(stderr, "Buffer size in samples (Rx): %zu\n", samps_per_buff);
     buff = malloc(samps_per_buff * 2 * sizeof(float)); //Note, each sample consists of 2
     buffs_ptr = (void **) &buff;
 
@@ -56,6 +56,11 @@ void* rxHandler(void* argsUncast) {
     if(!status) {
         // Set up file output
         FILE *rxPipe = fopen(rxPipeName, "wb");
+        if(rxPipe == NULL){
+            printf("Unable to Open Rx Pipe: %s\n", rxPipeName);
+            perror(NULL);
+            exit(1);
+        }
         printf("Opened Rx Pipe: %s\n", rxPipeName);
 
         printf("Samples Per Rx on Pipe: %d\n", samplesPerTransactRx);
@@ -131,7 +136,7 @@ void* rxHandler(void* argsUncast) {
 
             //Copy remaining samples
             int numToTransfer = numRemaining-numRemainingSamples;
-            for(int i = 0; i < numRemaining; i++){
+            for(int i = 0; i < numToTransfer; i++){
                 remainingSamplesRe[numRemainingSamples+i] = buff[srcSampleInd+2*i];
                 remainingSamplesIm[numRemainingSamples+i] = buff[srcSampleInd+2*i+1];
             }

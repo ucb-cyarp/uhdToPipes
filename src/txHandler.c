@@ -2,10 +2,12 @@
 // Created by Christopher Yarp on 10/19/19.
 //
 
+#define _GNU_SOURCE
 #include "txHandler.h"
 #include "common.h"
 #include <uhd.h>
 #include <time.h>
+#include <unistd.h>
 
 void* txHandler(void* argsUncast) {
     txHandlerArgs_t* args = (txHandlerArgs_t*) argsUncast;
@@ -27,7 +29,7 @@ void* txHandler(void* argsUncast) {
         return NULL;
     }
 
-    fprintf(stderr, "Buffer size in samples: %zu\n", samps_per_buff);
+    fprintf(stderr, "Buffer size in samples (Tx): %zu\n", samps_per_buff);
     float *buff = calloc(sizeof(float), samps_per_buff * 2);
     const void **buffs_ptr = (const void **) &buff;
 
@@ -35,14 +37,24 @@ void* txHandler(void* argsUncast) {
 
     // Set up pipes
     FILE *txPipe = fopen(txPipeName, "rb");
+    if(txPipe == NULL){
+        printf("Unable to Open Tx Pipe: %s\n", txPipeName);
+        perror(NULL);
+        exit(1);
+    }
     printf("Opened Tx Pipe: %s\n", txPipeName);
 
     FILE *txFeedbackPipe = NULL;
     if(txFeedbackPipeName != NULL){
         txFeedbackPipe = fopen(txFeedbackPipeName, "wb");
+        if(txFeedbackPipe == NULL){
+            printf("Unable to Open Tx Feedback Pipe: %s\n", txFeedbackPipeName);
+            perror(NULL);
+            exit(1);
+        }
+        printf("Opened Tx Feedback Pipe: %s\n", txFeedbackPipeName);
     }
-    printf("Opened Tx Feedback Pipe: %s\n", txFeedbackPipeName);
-
+    
     printf("Samples Per Tx on Pipe: %d\n", samplesPerTransactTx);
 
     float* pipeSamples = malloc(samplesPerTransactTx*2*sizeof(float));
@@ -54,7 +66,15 @@ void* txHandler(void* argsUncast) {
     int terminateCheckCounter = 0;
 
     bool running = true;
-    time_t startTime = time(NULL);
+    struct timespec startTime;
+    int timeStatus = clock_gettime(CLOCK_REALTIME, &startTime);
+    if(timeStatus == -1){
+        printf("Unable to get time");
+        perror(NULL);
+        exit(1);
+    }
+    double startTimeDbl = startTime.tv_sec + startTime.tv_nsec*1e-9;
+
     int64_t samplesSent = 0;
     double tgtRate = 1.01*txRate;
 
@@ -73,8 +93,15 @@ void* txHandler(void* argsUncast) {
 
         //TODO: Come up with a more elegant solution
         if(txRateLimit){
-            time_t currentTime = time(NULL);
-            double durationSec = difftime(currentTime, startTime);
+            struct timespec currentTime;
+            int timeStatus = clock_gettime(CLOCK_REALTIME, &currentTime);
+            if(timeStatus == -1){
+                printf("Unable to get time");
+                perror(NULL);
+                exit(1);
+            }
+            double currentTimeDbl = currentTime.tv_sec + currentTime.tv_nsec*1e-9;
+            double durationSec = currentTimeDbl - startTimeDbl;
             double rate = samplesSent/durationSec;
             if(rate>tgtRate){
                 execute = false;
@@ -82,18 +109,18 @@ void* txHandler(void* argsUncast) {
         }
 
         if(execute){
-            int elementsRead = fread(pipeSamples, sizeof(float)*2, samplesPerTransactTx, txPipe);
+            int elementsRead = fread(pipeSamples, sizeof(float), samplesPerTransactTx*2, txPipe);
             if(feof(txPipe)){
                 running = false; //Not actually needed
                 *terminateStatus = true; //Inform other threads to stop (Tx pipe closed)
                 break;
-            }else if(elementsRead != samplesPerTransactTx && ferror(txPipe)){
+            }else if(elementsRead != samplesPerTransactTx*2 && ferror(txPipe)){
                 printf("An error was encountered while reading the Tx pipe\n");
                 perror(NULL);
                 *terminateStatus = true; //Inform other threads to stop (Tx pipe error)
                 running = false; //Not actually needed
                 break;
-            }else if(elementsRead != samplesPerTransactTx){
+            }else if(elementsRead != samplesPerTransactTx*2){
                 printf("An unknown error was encountered while reading the Tx pipe\n");
                 *terminateStatus = true; //Inform other threads to stop (Tx pipe error)
                 running = false; //Not actually needed
@@ -158,7 +185,7 @@ void* txHandler(void* argsUncast) {
             if(forceFullTxBuffer){
                 //Copy remaining samples to remainder buffer
                 int numToTransferToRemainder = sampsReamining-numRemainingSamples;
-                for(int i = 0; i<sampsReamining; i++){
+                for(int i = 0; i<numToTransferToRemainder; i++){
                     samplesRemainder[numRemainingSamples*2+i*2] = pipeSamplesRe[srcSampleInd+i];
                     samplesRemainder[numRemainingSamples*2+i*2+1] = pipeSamplesIm[srcSampleInd+i];
                 }
