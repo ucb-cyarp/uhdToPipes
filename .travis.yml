@@ -10,12 +10,7 @@ language: cpp
 ##  - pybombs -p uhdprefix install uhd
 ##  - source ~/toolchain-uhd/setup_env.sh
 
-os:
-  - linux
-
-dist: bionic
-
-matrix:
+jobs:
   include:
     - compiler: gcc
       os: linux
@@ -25,9 +20,6 @@ matrix:
       os: linux
       dist: bionic
       env: COMPILER=clang++-6.0
-  exclude:
-    - compiler: gcc
-    - compiler: clang
 
 addons:
   apt:
