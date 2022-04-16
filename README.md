@@ -1,5 +1,4 @@
 # uhdToPipes
-[![Build Status](https://travis-ci.com/ucb-cyarp/uhdToPipes.svg?token=3DFsVQ6rTxi6J46pKtZ6&branch=master)](https://travis-ci.com/ucb-cyarp/uhdToPipes)
 
 A utility program which connects UHD to Linux/POSIX Pipes
 
