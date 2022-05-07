@@ -1,4 +1,6 @@
 # uhdToPipes
+Zenodo Concept DOI: [![Concept DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6526238.svg)](https://doi.org/10.5281/zenodo.6526238)
+
 
 A utility program which connects UHD to Linux/POSIX Pipes
 
