@@ -18,6 +18,16 @@ authors:
     affiliation: 'University of California, Berkeley'
     orcid: 'https://orcid.org/0000-0003-1083-3244'
 url: "https://github.com/ucb-cyarp/uhdToPipes"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.6526238
+    description: >-
+      Zenodo concept DOI representing all versions of
+      this software
+  - type: doi
+    value: 10.5281/zenodo.6526239
+    description: Zenodo DOI for v1.0.0
+doi: 10.5281/zenodo.6526238
 license: GPL-3.0
 preferred-citation:
   type: thesis
